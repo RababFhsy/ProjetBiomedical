@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect ,useState} from 'react'
+
 import { Grid, } from '@material-ui/core';
+import {  IconButton, InputAdornment } from '@mui/material';
 import Controls from "../components/controls/Controls";
 import { useForm, Form } from '../components/useForm';
 import * as userService from "./userService";
 
+import Iconify from "../components/Iconify";
 
 
 
@@ -18,7 +21,7 @@ const initialFValues = {
 
 export default function UserForm(props) {
     const { addOrEdit, recordForEdit } = props
-
+    const [showPassword, setShowPassword] = useState(false);
     const validate = (fieldValues = values) => {
         const temp = { ...errors }
         if ('nom' in fieldValues)
@@ -27,10 +30,11 @@ export default function UserForm(props) {
             temp.prenom = fieldValues.prenom ? "" : "This field is required."    
         if ('email' in fieldValues)
             temp.email = (/$^|.+@.+..+/).test(fieldValues.email) ? "" : "Email is not valid."
+        if ('role' in fieldValues)
+            temp.role = fieldValues.role.length !== 0 ? "" : "This field is required."    
         if ('password' in fieldValues)
             temp.mobile = fieldValues.password.length > 9 ? "" : "Minimum 10 numbers required."
-        if ('role' in fieldValues)
-            temp.role = fieldValues.role.length !== 0 ? "" : "This field is required."
+        
         setErrors({
             ...temp
         })
@@ -85,7 +89,7 @@ export default function UserForm(props) {
                         label="Role"
                         value={values.role}
                         onChange={handleInputChange}
-                        options={userService.getRoleCollection()}
+                        options={userService.getDepartmentCollection()}
                         error={errors.role}
                     />
                    
@@ -102,8 +106,18 @@ export default function UserForm(props) {
                         error={errors.email}
                     />
                 <Controls.Input
+                         type={showPassword ? 'text' : 'password'}
                         label="Mot de passe"
                         name="password"
+                        InputProps={{
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                                  <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                          }}
                         value={values.password}
                         onChange={handleInputChange}
                         error={errors.password}
@@ -111,13 +125,12 @@ export default function UserForm(props) {
                    
                     
 
-                    <div>
-                      
+                   <div>
                         <Controls.Button
                             type="submit"
-                            text="Submit" />
+                            text="Sauvgarder" />
                         <Controls.Button
-                            text="Reset"
+                            text="Annuler"
                             color="default"
                             onClick={resetForm} />
                     </div>

@@ -2,7 +2,7 @@
 
 const account = {
   displayName: ' welcome to Cabinet RM',
-  email: 'demo@minimals.cc',
+  email: 'admin@gmail.com',
   photoURL: '/static/mock-images/avatars/avatar_default.jpg',
 };
 

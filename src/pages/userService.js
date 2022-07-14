@@ -1,9 +1,9 @@
 const KEYS = {
-    user: 'user',
+    users: 'users',
     userId: 'userId'
 }
 
-export const getRoleCollection = () => ([
+export const getDepartmentCollection = () => ([
     { id: '1', title: 'SuperAdmin' },
     { id: '2', title: 'Admin' },
     { id: '3', title: 'Medecin' },
@@ -11,17 +11,17 @@ export const getRoleCollection = () => ([
 ])
 
 export function insertUser(data) {
-    const user = getAllUser();
-    data.id = generateUserId()
-    user.push(data)
-    localStorage.setItem(KEYS.user, JSON.stringify(user))
+    let users = getAllUsers();
+    data['id'] = generateUserId()
+    users.push(data)
+    localStorage.setItem(KEYS.users, JSON.stringify(users))
 }
 
 export function updateUser(data) {
-    const user = getAllUser();
-    const recordIndex = user.findIndex(x => x.id === data.id);
-    user[recordIndex] = { ...data }
-    localStorage.setItem(KEYS.user, JSON.stringify(user));
+    let users = getAllUsers();
+    let recordIndex = users.findIndex(x => x.id === data.id);
+    users[recordIndex] = { ...data }
+    localStorage.setItem(KEYS.users, JSON.stringify(users));
 }
 
 export function generateUserId() {
@@ -32,14 +32,14 @@ export function generateUserId() {
     return id;
 }
 
-export function getAllUser() {
-    if (localStorage.getItem(KEYS.user) === null)
-        localStorage.setItem(KEYS.user, JSON.stringify([]))
-    const user = JSON.parse(localStorage.getItem(KEYS.user));
+export function getAllUsers() {
+    if (localStorage.getItem(KEYS.users) === null)
+        localStorage.setItem(KEYS.users, JSON.stringify([]))
+    let users = JSON.parse(localStorage.getItem(KEYS.users));
     //map roleID to role title
-    const roles = getRoleCollection();
-    return user.map(x => ({
+    let departments = getDepartmentCollection();
+    return users.map(x => ({
         ...x,
-        role: roles[x.userId - 1].title
+        department: departments[x.role - 1].title
     }))
 }

@@ -1,4 +1,5 @@
-import { makeStyles } from '@material-ui/core'
+
+import { makeStyles, CssBaseline, createMuiTheme} from '@material-ui/core';
 // routes
 import Router from './routes';
 // theme
@@ -12,16 +13,36 @@ import { BaseOptionChartStyle } from './components/chart/BaseOptionChart';
 
 
 // ----------------------------------------------------------------------
-
-const useStyles = makeStyles({
-  appMain: {
-    paddingLeft: '1px',
-    width: '50%'
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#333996",
+      light: '#3c44b126'
+    },
+    secondary: {
+      main: "#f83245",
+      light: '#f8324526'
+    },
+    background: {
+      default: "#f4f5fd"
+    },
+  },
+  overrides:{
+    MuiAppBar:{
+      root:{
+        transform:'translateZ(0)'
+      }
+    }
+  },
+  props:{
+    MuiIconButton:{
+      disableRipple:true
+    }
   }
 })
 
 export default function App() {
-  const classes = useStyles(); 
+  
   return (
     <ThemeProvider>
       <ScrollToTop />
