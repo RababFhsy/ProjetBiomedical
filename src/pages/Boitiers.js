@@ -17,21 +17,22 @@ import Popup from '../components/Popup';
 import Controls from '../components/controls/Controls';
 import  PageHeader from '../components/PageHeader';
 import useTable from '../components/useTable';
-
+import Notification from '../components/Notification';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 
 
 const useStyles = makeStyles(theme => ({
-  pageContent: {
-      margin: theme.spacing(5),
-      padding: theme.spacing(3)
-  },
+//   pageContent: {
+//       margin: theme.spacing(5),
+//       padding: theme.spacing(3)
+//   },
   searchInput: {
       width: '60%'
   },
   newButton: {
       position: 'absolute',
-      right: '10px'
+      right: '8px'
   }
 }))
 
@@ -49,7 +50,7 @@ const headCells = [
   { id: 'reference', label: 'Reference' },
   
   { id: 'nombreBranche', label: 'Nombre de Branche' },
-  { id: 'type', label: 'Type' },
+  { id: 'department', label: 'Type' },
   { id: 'actions', label: 'Actions', disableSorting: true }
 ]
 export default function Boitiers() {
@@ -59,6 +60,8 @@ export default function Boitiers() {
   const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
   
   const [records, setRecords] = useState(boitierService.getAllBoitiers())
+  const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
   const {
     TblContainer,
     TblHead,
@@ -72,7 +75,7 @@ export default function Boitiers() {
             if (target.value == "")
                 return items;
             else
-                return items.filter(x => x.fullName.toLowerCase().includes(target.value))
+                return items.filter(x => x.reference.toLowerCase().includes(target.value))
         }
     })
 }
@@ -90,6 +93,20 @@ const addOrEdit = (boitier, resetForm) => {
 const openInPopup = item => {
   setRecordForEdit(item)
   setOpenPopup(true)
+}
+const onDelete = id => {
+    setConfirmDialog({
+        ...confirmDialog,
+        isOpen: false
+    })
+    boitierService.deleteBoitier(id);
+    setRecords(boitierService.getAllBoitiers())
+    setNotify({
+        isOpen: true,
+        message: 'Deleted Successfully',
+        type: 'error'
+    })
+
 }
 
 
@@ -132,7 +149,7 @@ const openInPopup = item => {
                                     <TableCell>{item.reference}</TableCell>
                                     
                                     <TableCell>{item.nombreBranche}</TableCell>
-                                    <TableCell>{item.type}</TableCell>
+                                    <TableCell>{item.department}</TableCell>
                                     <TableCell>
                                         <Controls.ActionButton
                                             color="primary"
@@ -140,7 +157,15 @@ const openInPopup = item => {
                                             <EditOutlinedIcon fontSize="small" />
                                         </Controls.ActionButton>
                                         <Controls.ActionButton
-                                            color="secondary">
+                                            color="secondary"
+                                            onClick={() => {
+                                                setConfirmDialog({
+                                                    isOpen: true,
+                                                    title: 'Are you sure to delete this record?',
+                                                    subTitle: "You can't undo this operation",
+                                                    onConfirm: () => { onDelete(item.id) }
+                                                })
+                                            }}>
                                             <CloseIcon fontSize="small" />
                                         </Controls.ActionButton>
                                     </TableCell>
@@ -160,6 +185,14 @@ const openInPopup = item => {
                     recordForEdit={recordForEdit}
                     addOrEdit={addOrEdit} />
             </Popup>
+            <Notification
+                notify={notify}
+                setNotify={setNotify}
+            />
+            <ConfirmDialog
+                confirmDialog={confirmDialog}
+                setConfirmDialog={setConfirmDialog}
+            />
         
 
        

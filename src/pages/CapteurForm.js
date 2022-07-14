@@ -12,8 +12,8 @@ const initialFValues = {
     type: '',
     photo: '',
     reference: '',
-    valeurMax: '',
-    valeurMin: '',
+    vmax: '',
+    vmin: '',
 }
 
 export default function CapteurForm(props) {
@@ -27,10 +27,10 @@ export default function CapteurForm(props) {
             temp.photo = fieldValues.photo ? "" : "This field is required."    
         if ('reference' in fieldValues)
             temp.reference = fieldValues.reference ? "" : "This field is required."
-        if ('valeurMax' in fieldValues)
-            temp.valeurMax = fieldValues.valeurMax ? "" : "This field is required."
-        if ('valeurMin' in fieldValues)
-            temp.valeurMin = fieldValues.valeurMin ? "" : "This field is required."
+        if ('vmax' in fieldValues)
+            temp.vmax = fieldValues.vmax ? "" : "This field is required."
+        if ('vmin' in fieldValues)
+            temp.vmin= fieldValues.vmin ? "" : "This field is required."
         setErrors({
             ...temp
         })
@@ -75,9 +75,11 @@ export default function CapteurForm(props) {
                     />
                      <Controls.Input
                         label="photo"
+                        // type="file" 
                         name="photo"
                         value={values.photo}
                         onChange={handleInputChange}
+                       
                         error={errors.photo}
                     />
                      <Controls.Input
@@ -93,19 +95,28 @@ export default function CapteurForm(props) {
 
                 </Grid>
                 <Grid item xs={6}>
+                    
+                <Controls.Select
+                        name="type"
+                        label="Type"
+                        value={values.type}
+                        onChange={handleInputChange}
+                        options={capteurService.getDepartmentCollection()}
+                        error={errors.type}
+                    />
                 <Controls.Input
                         label="valeurMax"
-                        name="valeurMax"
-                        value={values.valeurMax}
+                        name="vmax"
+                        value={values.vmax}
                         onChange={handleInputChange}
-                        error={errors.valeurMax}
+                        error={errors.vmax}
                     />
                 <Controls.Input
                         label="valeurMin"
-                        name="valeurMin"
-                        value={values.valeurMin}
+                        name="vmin"
+                        value={values.vmin}
                         onChange={handleInputChange}
-                        error={errors.valeurMin}
+                        error={errors.vmin}
                     />
                    
                     

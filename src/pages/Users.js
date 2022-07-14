@@ -30,6 +30,8 @@ import Controls from '../components/controls/Controls';
 import Popup from '../components/Popup';
 import useTable from '../components/useTable';
 import Page from '../components/Page';
+import Notification from '../components/Notification';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 
 
@@ -45,10 +47,10 @@ import Page from '../components/Page';
 // ----------------------------------------------------------------------
 
 const useStyles = makeStyles(theme => ({
-//   pageContent: {
-//       margin: theme.spacing(5),
-//       padding: theme.spacing(3)
-//   },
+  pageContent: {
+      margin: theme.spacing(5),
+      padding: theme.spacing(3)
+  },
   searchInput: {
       width: '60%'
   },
@@ -63,7 +65,7 @@ const headCells = [
   { id: 'prenom', label: 'Prénom ' },
   { id: 'email', label: 'Email' },
   { id: 'password', label: 'Mot de Passe' },
-  { id: 'role', label: 'Role' },
+  { id: 'department', label: 'Role' },
   { id: 'actions', label: 'Actions', disableSorting: true }
 ]
 
@@ -74,6 +76,8 @@ export default function Users() {
   const theme = useTheme();
   const [recordForEdit, setRecordForEdit] = useState(null)
   const [records, setRecords] = useState(userService.getAllUsers())
+  const [notify, setNotify] = useState({ isOpen: false, message: '', type: '' })
+  const [confirmDialog, setConfirmDialog] = useState({ isOpen: false, title: '', subTitle: '' })
   const [filterFn, setFilterFn] = useState({ fn: items => { return items; } })
   const [openPopup, setOpenPopup] = useState(false)
 
@@ -91,7 +95,7 @@ export default function Users() {
             if (target.value === "")
                 return items;
             
-                return items.filter(x => x.fullName.toLowerCase().includes(target.value))
+                return items.filter(x => x.nom.toLowerCase().includes(target.value))
         }
     })
 }
@@ -110,6 +114,20 @@ const addOrEdit = (user, resetForm) => {
 const openInPopup = item => {
     setRecordForEdit(item)
     setOpenPopup(true)
+}
+const onDelete = id => {
+    setConfirmDialog({
+        ...confirmDialog,
+        isOpen: false
+    })
+    userService.deleteUser(id);
+    setRecords(userService.getAllUsers())
+    setNotify({
+        isOpen: true,
+        message: 'Deleted Successfully',
+        type: 'error'
+    })
+
 }
 
 
@@ -156,18 +174,26 @@ const openInPopup = item => {
                                   <TableCell>{item.prenom}</TableCell>
                                   <TableCell>{item.email}</TableCell>
                                   <TableCell>{item.password}</TableCell>
-                                  <TableCell>{item.role}</TableCell>
+                                  <TableCell>{item.department}</TableCell>
                                   <TableCell>
-                                      <Controls.ActionButton
-                                          color="primary"
-                                          onClick={() => { openInPopup(item) }}>
-                                          <EditOutlinedIcon fontSize="small" />
-                                      </Controls.ActionButton>
-                                      <Controls.ActionButton
-                                          color="primary">
-                                          <CloseIcon fontSize="small" />
-                                      </Controls.ActionButton>
-                                  </TableCell>
+                                        <Controls.ActionButton
+                                            color="primary"
+                                            onClick={() => { openInPopup(item) }}>
+                                            <EditOutlinedIcon fontSize="small" />
+                                        </Controls.ActionButton>
+                                        <Controls.ActionButton
+                                            color="secondary"
+                                            onClick={() => {
+                                                setConfirmDialog({
+                                                    isOpen: true,
+                                                    title: 'Are you sure to delete this record?',
+                                                    subTitle: "You can't undo this operation",
+                                                    onConfirm: () => { onDelete(item.id) }
+                                                })
+                                            }}>
+                                            <CloseIcon fontSize="small" />
+                                        </Controls.ActionButton>
+                                    </TableCell>
                               </TableRow>)
                           )
                       }
@@ -184,6 +210,14 @@ const openInPopup = item => {
                   recordForEdit={recordForEdit}
                   addOrEdit={addOrEdit} />
           </Popup>
+          <Notification
+                notify={notify}
+                setNotify={setNotify}
+            />
+            <ConfirmDialog
+                confirmDialog={confirmDialog}
+                setConfirmDialog={setConfirmDialog}
+            />
           </Container>
           </Page>
       </>

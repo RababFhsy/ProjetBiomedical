@@ -40,6 +40,13 @@ export function updateBoitier(data) {
     localStorage.setItem(KEYS.boitiers, JSON.stringify(boitiers));
 }
 
+export function deleteBoitier(id) {
+    let boitiers = getAllBoitiers();
+    boitiers = boitiers.filter(x => x.id != id)
+    localStorage.setItem(KEYS.boitiers, JSON.stringify(boitiers));
+}
+
+
 export function generateBoitierId() {
     if (localStorage.getItem(KEYS.boitierId) == null)
         localStorage.setItem(KEYS.boitierId, '0')
